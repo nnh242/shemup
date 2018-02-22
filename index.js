@@ -6,6 +6,7 @@ var cursors;
 var ACCELERATION = 600;
 var DRAG = 400;
 var MAXSPEED = 400;
+var bank;
 
 function preload() {
   game.load.image('starfield','./assets/starfield.png');
@@ -41,6 +42,19 @@ function update() {
     //player.body.velocity.x=200;
     player.body.acceleration.x = ACCELERATION;
   }
+  //if the position of the player is 50px less than the edge then stop the player hence the acceleration is set back to 0
+  if(player.x > game.width - 50) {
+    player.x=game.width - 50;
+    player.body.acceleration.x = 0;
+  }
+  if(player.x < 50) {
+    player.x=50;
+    player.body.acceleration.x=0;
+  }
+  //banking effect does look really nice... but how.. does this get here ?
+  bank=player.body.velocity.x/MAXSPEED;
+  player.scale.x=1 - Math.abs(bank)/2;
+  player.angle=bank*10;
 }
 
 function render() {
