@@ -3,6 +3,10 @@ var game = new Phaser.Game(800,600, Phaser.AUTO, 'phaser-demo', {preload: preloa
 var player;
 var starfield;
 var cursors;
+var ACCELERATION = 600;
+var DRAG = 400;
+var MAXSPEED = 400;
+
 function preload() {
   game.load.image('starfield','./assets/starfield.png');
   game.load.image('ship','./assets/player.png');
@@ -17,6 +21,8 @@ function create() {
   //position the player after adding it
   player.anchor.setTo(0.5,0.5);
   game.physics.enable(player, Phaser.Physics.ARCADE);
+  player.body.maxVelocity.setTo(MAXSPEED,MAXSPEED);
+  player.body.drag.setTo(DRAG,DRAG);
   cursors= game.input.keyboard.createCursorKeys();
 }
 //the update function will add movement
@@ -24,14 +30,16 @@ function update() {
 //adding the y axis of the tile position will scroll the background up so if i change to x i can scroll the background right and this inpsires a mario runner game
   starfield.tilePosition.y +=2;
 
-  player.body.velocity.setTo(0,0);
+  player.body.acceleration.x=0;
 
   if(cursors.left.isDown) {
     //manipulating along the x axis here will move the player left and right
-    player.body.velocity.x=-200;
+    //player.body.velocity.x=-200;
+    player.body.acceleration.x = -ACCELERATION;
   }
   else if (cursors.right.isDown){
-    player.body.velocity.x=200;
+    //player.body.velocity.x=200;
+    player.body.acceleration.x = ACCELERATION;
   }
 }
 
