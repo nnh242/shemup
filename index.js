@@ -8,6 +8,8 @@ var DRAG = 400;
 var MAXSPEED = 400;
 var bank;
 var shipTrail;
+var bullets;
+var fireButton;
 
 function preload() {
   game.load.image('starfield','./assets/starfield.png');
@@ -38,6 +40,18 @@ function create() {
   shipTrail.setAlpha(1,0.01,800);
   shipTrail.setScale(0.05,0.4,0.05,0.4,2000,Phaser.Easing.Quintic.Out);
   shipTrail.start(false,5000,10);
+  //Add: bullets
+  bullets = game.add.group();
+  bullets.enableBody = true;
+  bullets.physicsBodyType = Phaser.Physics.ARCADE;
+  bullets.createMultiple(30, 'bullet');
+  bullets.setAll('anchor.x', 0.5);
+  bullets.setAll('anchor.y', 1);
+  bullets.setAll('outOfBoundsKill', true);
+  bullets.setAll('checkWorldBounds', true);
+  // fire button
+  fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+
 }
 //the update function will add movement
 function update() {
@@ -64,11 +78,29 @@ function update() {
     player.x=50;
     player.body.acceleration.x=0;
   }
+  // Fire bullet
+  if (fireButton.isDown || game.input.activePointer.isDown) {
+    fireBullet();
+  }
+  function fireBullet(){
+    var bullet = bullets.getFirstExists(false);
+    if(bullet){
+      bullet.reset(player.x,player.y +8);
+      bullet.body.velocity.y = -400;
+    }
+  }
+
+  //move ship towards mouse pointer add:mouse control
+  if(game.input.x <game.width -20 && game.input.x > 20 && game.input.y >20 && game.input.y < game.height - 20) {
+    var minDist = 200;
+    var dist = game.input.x - player.x;
+    player.body.velocity.x = MAXSPEED * game.math.clamp(dist/minDist, -1, 1);
+  }
   //banking effect does look really nice... but how.. does this get here ?
   bank=player.body.velocity.x/MAXSPEED;
   player.scale.x=1 - Math.abs(bank)/2;
   player.angle=bank*30;
-  shipTrail.x=player.x;
+  shipTrail.x=player.x
 }
 
 function render() {
